@@ -1,25 +1,16 @@
 # -*- coding: utf-8 -*-
-"""Store Sales Prediction - Fixed Version with Debugging"""
+"""Store Sales Prediction - Fixed Version"""
 
-import sys
 import pandas as pd
-
-# Check if matplotlib is installed before importing
-try:
-    import matplotlib.pyplot as plt
-    import seaborn as sns
-    matplotlib_available = True
-except ModuleNotFoundError:
-    print("Warning: matplotlib not found. Visualization will be skipped.")
-    matplotlib_available = False
-
-import altair as alt  # Streamlit alternative
+import matplotlib.pyplot as plt
+import seaborn as sns
+import altair as alt
 import streamlit as st
-
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import r2_score
 from xgboost import XGBRegressor
+import joblib
 
 # Load Data
 data = pd.read_csv('BigMart_Sales.csv')
@@ -39,9 +30,9 @@ data.loc[data['Outlet_Size'].isnull(), 'Outlet_Size'] = data['Outlet_Type'].map(
 data.isnull().sum()
 st.write("Missing values handled successfully!")
 
-# Visualizing numeric distributions (Only if matplotlib is available)
+# Visualizing numeric distributions
 numeric_cols = ['Item_Weight', 'Item_Visibility', 'Item_MRP', 'Item_Outlet_Sales']
-if matplotlib_available:
+if 'matplotlib.pyplot' in sys.modules:
     for col in numeric_cols:
         plt.figure(figsize=(6,6))
         sns.histplot(data[col], kde=True)
@@ -49,6 +40,15 @@ if matplotlib_available:
         plt.show()
 else:
     st.line_chart(data[numeric_cols])
+
+# Visualizing categorical distributions
+categorical_cols = ['Outlet_Establishment_Year', 'Item_Fat_Content', 'Item_Type', 'Outlet_Size', 'Outlet_Type', 'Outlet_Location_Type']
+for col in categorical_cols:
+    plt.figure(figsize=(10,5))
+    sns.countplot(x=data[col])
+    plt.xticks(rotation=45)
+    plt.title(f'Count of {col}')
+    plt.show()
 
 # Standardizing 'Item_Fat_Content' categories
 data.replace({'Item_Fat_Content': {'LF': 'Low Fat', 'low fat': 'Low Fat', 'reg': 'Regular'}}, inplace=True)
