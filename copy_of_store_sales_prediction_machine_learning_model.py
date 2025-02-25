@@ -9,11 +9,11 @@ Original file is located at
 Read Data from File to Pandas DataFrame
 """
 
-!pip install pandas matplotlib seaborn xgboost scikit_learn
+
 
 #Reading Input Dataset
 import pandas as pd
-data = pd.read_csv('/content/BigMart_Sales.csv')
+data = pd.read_csv('BigMart_Sales.csv')
 
 #lets print first 5 lines of dataset
 data.head()
